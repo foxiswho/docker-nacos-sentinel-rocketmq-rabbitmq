@@ -1,0 +1,161 @@
+version: '3.5'
+
+services:
+#  nginx:
+#      build: ./nginx
+#      container_name: nsrrNginx
+#      ports:
+#        - "80:80"
+#      volumes:
+#        - ./nginx/vhost:/etc/nginx/conf/vhost:ro
+#      environment:
+#          - DEBUG=true
+#          - HOST_OS=linux
+#      networks:
+#              nsrr:
+#                  aliases:
+#                    - nginx
+  mysql:
+      build: ./mysql
+      hostname: mysql
+      container_name: mysql
+      ports:
+        - "3306:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+      volumes:
+        - /tmp/:/tmp/
+      # 关闭，如有需要，请自行开启，但是必须要删除 ./mysql/data 的 README.md 文件，否则报错
+      #  - ./mysql/data:/var/lib/mysql
+      networks:
+                  nsrr:
+                      aliases:
+                        - mysql
+
+  mysql-master:
+    container_name: mysql-master
+    image: nacos/nacos-mysql-master:latest
+    env_file:
+      - ./nacos/env/mysql-common.env
+      - ./nacos/env/mysql-master.env
+    volumes:
+      - ./mysql-master:/var/lib/mysql
+    ports:
+      - "3304:3306"
+    networks:
+      nsrr:
+        aliases:
+          - mysql-master
+
+  mysql-slave:
+    container_name: mysql-slave
+    image: nacos/nacos-mysql-slave:latest
+    env_file:
+      - ./nacos/env/mysql-common.env
+      - ./nacos/env/mysql-slave.env
+    volumes:
+      - ./mysql-slave:/var/lib/mysql
+    ports:
+      - "3305:3306"
+    networks:
+      nsrr:
+        aliases:
+          - mysql-slave
+    depends_on:
+      - mysql-master
+
+  nacos:
+    image: nacos/nacos-server:latest
+    container_name: nacos
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_MASTER_SERVICE_HOST=mysql-master
+      - MYSQL_MASTER_SERVICE_DB_NAME=nacos_devtest
+      - MYSQL_MASTER_SERVICE_PORT=3306
+      - MYSQL_SLAVE_SERVICE_HOST=mysql-slave
+      - MYSQL_SLAVE_SERVICE_PORT=3306
+      - MYSQL_MASTER_SERVICE_USER=nacos
+      - MYSQL_MASTER_SERVICE_PASSWORD=nacos
+    volumes:
+      - ./standalone-logs/:/home/nacos/logs
+    ports:
+      - "8848:8848"
+      - "9555:9555"
+    restart: on-failure
+    networks:
+      nsrr:
+        aliases:
+          - nacos
+    depends_on:
+      - mysql-slave
+
+  redis:
+      image: redis:latest
+      #build: ./redis
+      container_name: redis
+      ports:
+        - "6379:6379"
+      command: redis-server /usr/local/etc/redis/redis.conf
+      volumes:
+#        - /Users/:/Users/
+         - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      networks:
+                  nsrr:
+                      aliases:
+                        - redis
+  rmqnamesrv:
+    image: foxiswho/rocketmq:server
+    container_name: rmqnamesrv
+    ports:
+      - 9876:9876
+    volumes:
+      - ./rmq/logs:/opt/logs
+      - ./rmq/store:/opt/rmqstore
+    networks:
+      nsrr:
+        aliases:
+        - rmqnamesrv
+
+  rmqbroker:
+    image: foxiswho/rocketmq:broker
+    container_name: rmqbroker
+    ports:
+      - 10909:10909
+      - 10911:10911
+    volumes:
+      - ./rmq/logs:/opt/logs
+      - ./rmq/store:/opt/rmqstore
+      - ./rmq/brokerconf/broker.conf:/etc/rocketmq/broker.conf
+    environment:
+      NAMESRV_ADDR: "rmqnamesrv:9876"
+      JAVA_OPTS: " -Duser.home=/opt"
+      JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+    command: mqbroker -c /etc/rocketmq/broker.conf
+    depends_on:
+    - rmqnamesrv
+    networks:
+      nsrr:
+        aliases:
+        - rmqbroker
+
+  rmqconsole:
+    image: styletang/rocketmq-console-ng
+    container_name: rmqconsole
+    ports:
+    - 8180:8080
+    environment:
+      JAVA_OPTS: "-Drocketmq.namesrv.addr=rmqnamesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
+    depends_on:
+    - rmqnamesrv
+    networks:
+      nsrr:
+        aliases:
+        - rmqconsole
+
+
+networks:
+  nsrr:
+    name: nsrr
+    driver: bridge
