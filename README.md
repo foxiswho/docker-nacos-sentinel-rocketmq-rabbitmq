@@ -20,7 +20,7 @@ docker-compose up
 
 账号/密码：root/root
 
-端口：3600
+端口：3306
 
 # nacos mysql 主从数据用户名及密码
 
