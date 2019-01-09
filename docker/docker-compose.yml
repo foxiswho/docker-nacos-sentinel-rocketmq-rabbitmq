@@ -153,7 +153,18 @@ services:
       nsrr:
         aliases:
         - rmqconsole
-
+  java-demo:
+    build: ./java
+    container_name: java-demo
+    #command: java -Denv=DEV -Djava.security.egd=file:/dev/./urandom -jar /java/provider-demo.jar
+    ports:
+      - "7020:7020"
+    volumes:
+      - ./provider-demo:/java
+    networks:
+      nsrr:
+        aliases:
+          - java-demo
 
 networks:
   nsrr:
