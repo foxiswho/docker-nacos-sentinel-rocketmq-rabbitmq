@@ -153,6 +153,23 @@ services:
       nsrr:
         aliases:
         - rmqconsole
+
+  sentinel:
+    image: foxiswho/sentinel
+    hostname: sentinel
+    container_name: sentinel
+    ports:
+      - "8720:8720"
+      - "8719:8719"
+    environment:
+      - JAVA_OPTS=-Xmx1g
+  #    volumes:
+  #      - /tmp/:/tmp/
+    networks:
+      nsrr:
+        aliases:
+          - sentinel
+    
   java-demo:
     build: ./java
     container_name: java-demo
