@@ -49,8 +49,11 @@ http://localhost:8180
 原因 Broker禁止自动创建Topic，且用户没有通过手工方式创建Topic，请自行创建 topic
 
 # sentinel 
-待添加
+端口：8700
 
+```SHELL
+http://localhost:8700
+```
 
 # rabbitmq
 待添加

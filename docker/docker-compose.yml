@@ -159,17 +159,16 @@ services:
     hostname: sentinel
     container_name: sentinel
     ports:
-      - "8720:8720"
-      - "8719:8719"
-    environment:
-      - JAVA_OPTS=-Xmx1g
-  #    volumes:
-  #      - /tmp/:/tmp/
+      - "8700:8080"
+    #environment:
+      #- JAVA_OPTS=-Xmx1g
+    volumes:
+      - ./sentinel/logs:/opt/logs
     networks:
       nsrr:
         aliases:
           - sentinel
-    
+
   java-demo:
     build: ./java
     container_name: java-demo
