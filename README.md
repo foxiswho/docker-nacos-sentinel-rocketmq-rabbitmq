@@ -70,6 +70,12 @@ https://www.docker.elastic.co/
 ```SHELL
 sudo sysctl -w vm.max_map_count=262144
 ```
+或
+```SHELL
+sudo echo "vm.max_map_count=262144" >> /etc/sysctl.conf
+
+sysctl -p
+```
 
 ### 先下载 词库，如果你不需要词库 请PASS
 https://github.com/medcl/elasticsearch-analysis-ik/releases
