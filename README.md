@@ -55,6 +55,55 @@ http://localhost:8180
 http://localhost:8700
 ```
 
+# elasticsearch
+
+
+## 基本配置
+### 注意.端口
+
+在安装组件之前需要确保以下端口没有被占用:9200 9300 (Elasticsearch)
+
+同时需要确保内核参数 vm_max_map_count 至少设置为262144:
+```SHELL
+sudo sysctl -w vm.max_map_count=262144
+```
+
+### 先下载 词库，如果你不需要词库 请PASS
+https://github.com/medcl/elasticsearch-analysis-ik/releases
+```SHELL
+wget https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.5.2/elasticsearch-analysis-ik-6.5.2.zip
+```
+解压缩 到 `elasticsearch/plugins`目录中，并将文件名改为`analysis-ik`
+
+配置 `analysis-ik/config` 目录下`IKAnalyzer.cfg.xml`文件
+```XML
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>IK Analyzer 扩展配置</comment>
+	<!--用户可以在这里配置自己的扩展字典 -->
+	<entry key="ext_dict">main.dic;extra_main.dic;</entry>
+	 <!--用户可以在这里配置自己的扩展停止词字典-->
+	<entry key="ext_stopwords"></entry>
+	<!--用户可以在这里配置远程扩展字典 -->
+	<!-- <entry key="remote_ext_dict">words_location</entry> -->
+	<!--用户可以在这里配置远程扩展停止词字典-->
+	<!-- <entry key="remote_ext_stopwords">words_location</entry> -->
+</properties>
+```
+最后 修改配置文件 `docker-xxxx.yml` 选择你的配置文件，把如下一行 前面的`#`号删除
+```angular2html
+#- ./elasticsearch/plugins/analysis-ik:/usr/share/elasticsearch/plugins/analysis-ik
+```
+
+### 目录权限
+
+数据存储目录,目录设置 `777` 权限，否则启动不成功
+
+```YML
+chmod -R 777 ./elasticsearch/data
+```
+
 # rabbitmq
 待添加
 

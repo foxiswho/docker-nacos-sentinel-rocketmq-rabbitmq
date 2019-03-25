@@ -169,6 +169,27 @@ services:
         aliases:
           - sentinel
 
+  elasticsearch:
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elasticsearch/config/synonyms.txt:/usr/share/elasticsearch/config/synonyms.txt:ro
+      #- ./elasticsearch/plugins/analysis-ik:/usr/share/elasticsearch/plugins/analysis-ik
+      #- ./elasticsearch/data:/usr/share/elasticsearch/data
+      # elasticsearch/data 数据存储目录,记得本目录设置 777 可写权限，否则启动不成功
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      elk:
+        aliases:
+          - elasticsearch
+
   java-demo:
     build: ./java
     container_name: java-demo
