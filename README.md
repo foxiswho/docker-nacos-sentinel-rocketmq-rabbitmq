@@ -80,7 +80,7 @@ sysctl -p
 ### 先下载 词库，如果你不需要词库 请PASS
 https://github.com/medcl/elasticsearch-analysis-ik/releases
 ```SHELL
-wget https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.5.2/elasticsearch-analysis-ik-6.5.2.zip
+wget https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.5.4/elasticsearch-analysis-ik-6.5.4.zip
 ```
 解压缩 到 `elasticsearch/plugins`目录中，并将文件名改为`analysis-ik`
 
