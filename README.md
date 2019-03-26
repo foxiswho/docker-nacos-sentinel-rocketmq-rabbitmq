@@ -116,4 +116,24 @@ chmod -R 777 ./elasticsearch/data
 # rabbitmq
 待添加
 
+
+# java
+
+查看网络名
+```SHELL
+docker network ls
+```
+查看所有容器IP
+```SHELL
+docker inspect --format='{{.Name}} - {{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq)
+```
+
+根据得到的`网络名`->`nsrr`和`ip地址段`->`172.18.0.x`
+设置新的容器加入到该网络中
+```SHELL
+docker run -d -it -p 7020:7020 -h provider-mdc -v `pwd`:/opt \
+--name=provider-mdc --network=nsrr --ip=172.18.0.20 docker_java-demo -Djava.security.egd=file:/dev/./urandom -jar /opt/provider-mdc.jar
+```
+
+
 ## FAQ 报错

@@ -25,16 +25,17 @@ COPY scripts/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
 && ln -s /usr/local/bin/docker-entrypoint.sh /docker-entrypoint.sh
 
-RUN chmod -R +x ${SENTINEL_HOME}/*jar
+#RUN chmod -R +x ${PROGRAM_HOME}*jar
 
-VOLUME ${SENTINEL_LOGS}
+VOLUME ${PROGRAM_LOGS}
 
-WORKDIR  ${SENTINEL_HOME}
+WORKDIR  ${PROGRAM_HOME}
 
 RUN java -version
 
 EXPOSE ${PORT}
 
+
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD java ${JAVA_OPTS} -jar *.jar
+CMD java ${JAVA_OPTS} -jar --version

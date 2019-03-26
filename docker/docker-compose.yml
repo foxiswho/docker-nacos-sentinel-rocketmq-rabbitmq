@@ -195,12 +195,14 @@ services:
   java-demo:
     build: ./java
     container_name: java-demo
-    #command: java -Denv=DEV -Djava.security.egd=file:/dev/./urandom -jar /java/provider-demo.jar
+    #command: -Djava.security.egd=file:/dev/./urandom -jar /opt/provider-demo.jar
     command: jar --version
     ports:
       - "7020:7020"
-    volumes:
-      - ./provider-demo:/java
+    environment:
+      JAVA_OPT_EXT: "-Xms128m -Xmx128m -Xmn128m"
+    #volumes:
+    #  - ./provider-demo:/opt
     networks:
       nsrr:
         aliases:
