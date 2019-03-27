@@ -193,6 +193,7 @@ services:
           - elasticsearch
 
   kibana:
+    container_name: kibana
     build:
       context: kibana/
       args:

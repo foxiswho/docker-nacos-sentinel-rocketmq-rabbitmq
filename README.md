@@ -135,5 +135,17 @@ docker run -d -it -p 7020:7020 -h provider-mdc -v `pwd`:/opt \
 --name=provider-mdc --network=nsrr --ip=172.18.0.20 docker_java-demo -Djava.security.egd=file:/dev/./urandom -jar /opt/provider-mdc.jar
 ```
 
+# elasticsearch
+端口
+`9200`
+
+`9300`
+# kibana 
+端口
+`5601`
+
+```shell
+http://localhost:5601
+```
 
 ## FAQ 报错
