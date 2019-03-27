@@ -192,6 +192,22 @@ services:
         aliases:
           - elasticsearch
 
+  kibana:
+    build:
+      context: kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/configkibana.yml
+    ports:
+      - "5601:5601"
+    networks:
+      nsrr:
+        aliases:
+          - kibana
+    depends_on:
+      - elasticsearch
+
   java-demo:
     build: ./java
     container_name: java-demo
