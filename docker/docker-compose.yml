@@ -8,9 +8,9 @@ services:
 #        - "80:80"
 #        - "443:443"
 #      volumes:
-#        #- ./wwwroot:/usr/share/nginx/html
-#        #- ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
-#        #- ./nginx/conf.d/mysite.conf:/etc/nginx/conf.d/mysite.conf
+#        - ./wwwroot:/usr/share/nginx/html
+#        - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+#        - ./nginx/conf.d/mysite.conf:/etc/nginx/conf.d/mysite.conf
 #      environment:
 #          - NGINX_HOST=localhost
 #          - NGINX_PORT=80
@@ -195,7 +195,7 @@ services:
       - "9200:9200"
       - "9300:9300"
     environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ES_JAVA_OPTS: "-Xmx512m -Xms256m"
     networks:
       nsrr:
         aliases:
@@ -231,6 +231,16 @@ services:
       - ./java/env/prod.env
     #volumes:
     #  - ./provider-demo:/opt
+    deploy:
+      resources:
+        limits:
+          cpus: '0.30'
+          memory: 768M
+          #限制使用不超过 50M 的内存和 0.30（30％）可用处理时间（CPU）
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+          #保留 512M 了内存和 0.25 CPU时间
     networks:
       nsrr:
         aliases:
